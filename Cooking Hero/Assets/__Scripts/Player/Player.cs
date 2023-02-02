@@ -1,9 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public static Player Instance { get; private set; }
+
+    public EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public class OnSelectedCounterChangedEventArgs : EventArgs
+    {
+        public CleanCounter selectedCounter;
+    }
+
     [SerializeField] private GameInputs gameInputs;
 
     [SerializeField] private float moveSpeed = 7f;
@@ -12,36 +21,35 @@ public class Player : MonoBehaviour
     private bool isWalking;
 
     private Vector3 lastInteractDirection;
+    private CleanCounter selectedCounter;
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Debug.LogError("There is more than one player instance");
+        }
+
+        Instance = this;
+    }
 
     private void Start()
     {
         gameInputs.OnInteractAction += GameInputs_OnInteractAction;
     }
 
-    private void GameInputs_OnInteractAction(object sender, System.EventArgs e)
-    {
-        Vector2 inputVector = gameInputs.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
-
-        if (moveDir != Vector3.zero)
-        {
-            lastInteractDirection = moveDir;
-        }
-
-        float interactDistance = 2f;
-        if (Physics.Raycast(transform.position, lastInteractDirection, out RaycastHit hit, interactDistance, counterLayerMask))
-        {
-            if (hit.transform.TryGetComponent(out CleanCounter cleanCounter))
-            {
-                cleanCounter.Interact();
-            }
-        }
-    }
-
     private void Update()
     {
         HandleMovement();
         HandleInteractions();
+    }
+
+    private void GameInputs_OnInteractAction(object sender, System.EventArgs e)
+    {
+        if (selectedCounter != null)
+        {
+            selectedCounter.Interact();
+        }
     }
 
     private void HandleMovement()
@@ -107,13 +115,30 @@ public class Player : MonoBehaviour
         {
             if (hit.transform.TryGetComponent(out CleanCounter cleanCounter))
             {
-                //cleanCounter.Interact();
+                if (cleanCounter != selectedCounter)
+                {
+                    SetSelectedCounter(cleanCounter);
+                }
             }
+            else
+            {
+                SetSelectedCounter(null);
+            }
+        }
+        else
+        {
+            SetSelectedCounter(null);
         }
     }
 
     public bool IsWalking()
     {
         return isWalking;
+    }
+
+    private void SetSelectedCounter(CleanCounter selectedCounter)
+    {
+        this.selectedCounter = selectedCounter;
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs { selectedCounter = selectedCounter });
     }
 }
