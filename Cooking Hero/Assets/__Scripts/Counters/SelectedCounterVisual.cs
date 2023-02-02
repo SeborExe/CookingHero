@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class SelectedCounterVisual : MonoBehaviour
 {
-    private CleanCounter cleanCounter;
+    private BaseCounter baseCounter;
 
-    [SerializeField] private GameObject visualGameObject;
+    [SerializeField] private GameObject[] visualGameObjects;
 
     private void Awake()
     {
-        cleanCounter = GetComponentInParent<CleanCounter>();
+        baseCounter = GetComponentInParent<BaseCounter>();
     }
 
     private void Start()
@@ -20,7 +20,7 @@ public class SelectedCounterVisual : MonoBehaviour
 
     private void Player_OnSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs args)
     {
-        if (args.selectedCounter == cleanCounter)
+        if (args.selectedCounter == baseCounter)
         {
             ChangeVisualVisibility(true);
         }
@@ -32,6 +32,9 @@ public class SelectedCounterVisual : MonoBehaviour
 
     private void ChangeVisualVisibility(bool show)
     {
-        visualGameObject.SetActive(show);
+        foreach (GameObject visualGameObject in visualGameObjects)
+        {
+            visualGameObject.SetActive(show);
+        }
     }
 }

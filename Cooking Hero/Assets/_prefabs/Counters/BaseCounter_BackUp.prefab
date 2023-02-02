@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 5475261201308681298}
   - component: {fileID: 148889585982748321}
   m_Layer: 6
-  m_Name: ClearCounter
+  m_Name: BaseCounter_BackUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
