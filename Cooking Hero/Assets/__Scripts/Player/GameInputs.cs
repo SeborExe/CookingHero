@@ -8,6 +8,7 @@ public class GameInputs : MonoBehaviour
     private PlayerInputActions playerInputActions;
 
     public event EventHandler OnInteractAction;
+    public event EventHandler OnInteractAlternativeAction;
 
     private void Awake()
     {
@@ -15,11 +16,17 @@ public class GameInputs : MonoBehaviour
 
         playerInputActions.Player.Enable();
         playerInputActions.Player.Interact.performed += Interact_performed;
+        playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
     }
 
     private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext callback)
     {
         OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void InteractAlternate_performed(UnityEngine.InputSystem.InputAction.CallbackContext callback)
+    {
+        OnInteractAlternativeAction?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVectorNormalized()
