@@ -9,6 +9,8 @@ public class DeliveryManager : MonoBehaviour
 
     public event EventHandler OnRecipeSpawned;
     public event EventHandler OnRecipeCompleted;
+    public event EventHandler OnRecipeSuccess;
+    public event EventHandler OnRecipeFailed;
 
     [SerializeField] private RecipeListSO recipeListSO;
     [SerializeField] private float spawnRecipeTimerMax = 5f;
@@ -74,12 +76,14 @@ public class DeliveryManager : MonoBehaviour
                     //Player deliverd the correct recipe!
                     waitingRecipeList.RemoveAt(i);
                     OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
+                    OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
         //No matches found
         //Player delivered wrong recipe
+        OnRecipeFailed?.Invoke(this, EventArgs.Empty);
     }
 
     public List<RecipeSO> GetRecipeSOList()
