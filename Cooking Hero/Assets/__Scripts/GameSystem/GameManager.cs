@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private float countDownToStartTimer = 3f;
     private float gamePlayingTimer;
     private float gamePlayingTimerMax = 20f;
+    private bool isGamePaused = false;
 
     private enum State
     {
@@ -27,6 +28,16 @@ public class GameManager : MonoBehaviour
     {
         state = State.WaitingToStart;
         Instance = this;
+    }
+
+    private void Start()
+    {
+        GameInputs.Instance.OnPauseAction += GameInputs_OnPauseAction;
+    }
+
+    private void GameInputs_OnPauseAction(object sender, EventArgs e)
+    {
+        PauseGame();
     }
 
     private void Update()
@@ -89,5 +100,18 @@ public class GameManager : MonoBehaviour
     public float GetPlayingTimerNormalized()
     {
         return 1 - (gamePlayingTimer / gamePlayingTimerMax);
+    }
+
+    private void PauseGame()
+    {
+        isGamePaused = !isGamePaused;
+        if (isGamePaused)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
     }
 }
