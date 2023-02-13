@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public event EventHandler OnStateChanged;
+    public event EventHandler OnGamePused;
+    public event EventHandler OnGameUnpaused;
 
     private State state;
     private float waitingToStartTimer = 1f;
@@ -102,16 +104,18 @@ public class GameManager : MonoBehaviour
         return 1 - (gamePlayingTimer / gamePlayingTimerMax);
     }
 
-    private void PauseGame()
+    public void PauseGame()
     {
         isGamePaused = !isGamePaused;
         if (isGamePaused)
         {
             Time.timeScale = 0f;
+            OnGamePused?.Invoke(this, EventArgs.Empty);
         }
         else
         {
             Time.timeScale = 1f;
+            OnGameUnpaused?.Invoke(this, EventArgs.Empty);
         }
     }
 }

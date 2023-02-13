@@ -1,18 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GamePausedUI : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Button mainMenuButon;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button optionsButton;
+
+    private void Start()
     {
-        
+        GameManager.Instance.OnGamePused += GameManager_OnGamePused;
+        GameManager.Instance.OnGameUnpaused += GameManager_OnGameUnpaused;
+
+        ChangeVisibility(false);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        mainMenuButon.onClick.AddListener(() => Loader.Load(Loader.Scene.MainMenu));
+        resumeButton.onClick.AddListener(() => GameManager.Instance.PauseGame());
+        optionsButton.onClick.AddListener(() => OptionsUI.Instance.ChangeVisiblity(true)); ;
+    }
+
+    private void OnDisable()
+    {
+        mainMenuButon.onClick.RemoveAllListeners();
+        resumeButton.onClick.RemoveAllListeners();
+    }
+
+    private void GameManager_OnGameUnpaused(object sender, System.EventArgs e)
+    {
+        ChangeVisibility(false);
+    }
+
+    private void GameManager_OnGamePused(object sender, System.EventArgs e)
+    {
+        ChangeVisibility(true);
+    }
+
+    private void ChangeVisibility(bool show)
+    {
+        gameObject.SetActive(show);
     }
 }
