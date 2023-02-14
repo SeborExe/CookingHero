@@ -25,6 +25,8 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private Binding PauseBinding;
     [SerializeField] private Transform pressToRebindTransform;
 
+    private Action<bool> onCloseButtonAction;
+
     private void Awake()
     {
         Instance = this;
@@ -61,6 +63,7 @@ public class OptionsUI : MonoBehaviour
         backButton.onClick.AddListener(() =>
         {
             ChangeVisiblity(false);
+            onCloseButtonAction?.Invoke(true);
         });
 
         MoveUpBinding.bindingButton.onClick.AddListener(() => { RebindBinding(GameInputs.Binding.MoveUp); });
@@ -93,9 +96,15 @@ public class OptionsUI : MonoBehaviour
         PauseBinding.bindingText.text = GameInputs.Instance.GetBindingText(GameInputs.Binding.Pause);
     }
 
-    public void ChangeVisiblity(bool show)
+    public void ChangeVisiblity(bool show, Action<bool> onCloseButtonAction = null)
     {
         gameObject.SetActive(show);
+
+        if (show == true)
+        {
+            this.onCloseButtonAction = onCloseButtonAction;
+            soundEffectsButton.Select();
+        }
     }
 
     public void ChangePressToRebaindTransformVisibility(bool show) 

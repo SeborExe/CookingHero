@@ -21,13 +21,18 @@ public class GamePausedUI : MonoBehaviour
     {
         mainMenuButon.onClick.AddListener(() => Loader.Load(Loader.Scene.MainMenu));
         resumeButton.onClick.AddListener(() => GameManager.Instance.PauseGame());
-        optionsButton.onClick.AddListener(() => OptionsUI.Instance.ChangeVisiblity(true)); ;
+        optionsButton.onClick.AddListener(() =>
+        {
+            ChangeVisibility(false);
+            OptionsUI.Instance.ChangeVisiblity(true, ChangeVisibility);
+        });
     }
 
     private void OnDisable()
     {
         mainMenuButon.onClick.RemoveAllListeners();
         resumeButton.onClick.RemoveAllListeners();
+        optionsButton.onClick.RemoveAllListeners();
     }
 
     private void GameManager_OnGameUnpaused(object sender, System.EventArgs e)
@@ -43,5 +48,10 @@ public class GamePausedUI : MonoBehaviour
     private void ChangeVisibility(bool show)
     {
         gameObject.SetActive(show);
+
+        if (show == true)
+        {
+            resumeButton.Select();
+        }
     }
 }
