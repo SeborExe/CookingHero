@@ -15,6 +15,7 @@ public class DeliveryManager : MonoBehaviour
     [SerializeField] private RecipeListSO recipeListSO;
     [SerializeField] private float spawnRecipeTimerMax = 5f;
     [SerializeField] private int waitingRecipeMax = 5;
+    private int successfulRecipesAmount = 0;
 
     private List<RecipeSO> waitingRecipeList = new List<RecipeSO>();
     private float spawnRecipeTimer;
@@ -74,9 +75,11 @@ public class DeliveryManager : MonoBehaviour
                 if (plateContentMatchesRecipe)
                 {
                     //Player deliverd the correct recipe!
+                    successfulRecipesAmount++;
                     waitingRecipeList.RemoveAt(i);
                     OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
                     OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
+                    return;
                 }
             }
         }
@@ -94,5 +97,10 @@ public class DeliveryManager : MonoBehaviour
     public void RestartDeliveryTimer()
     {
         spawnRecipeTimer = spawnRecipeTimerMax;
+    }
+
+    public int GetSuccessfulyAmount()
+    {
+        return successfulRecipesAmount;
     }
 }
